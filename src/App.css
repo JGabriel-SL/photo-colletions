@@ -30,19 +30,10 @@
 .photos {
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-}
-
-.photo {
-  margin: 10px;
-}
-
-.photo img {
-  width: 280px;
-  height: 200px;
-  border-radius: 20px;
+  overflow-y: scroll;
 }
 
 button {

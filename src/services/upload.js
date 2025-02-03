@@ -1,37 +1,18 @@
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { db, storage } from '../firebase/firebase';
+import { db } from '../firebase/firebase';
 
-async function uploadImage(image) {
-  if (!image) {
-    throw new Error("Nenhuma imagem selecionada.");
-  }
-
+async function uploadImage(imageUrl, nameImage) {
   try {
-    console.log(`Starting function ${image.name}`)
-
-    // Criando referência para o Firebase Storage
-    const imageRef = ref(storage, `images/${image.name}`);
-    console.log(`criou o imageRef ${imageRef}`)
-
-    // Fazendo o upload da imagem
-    await uploadBytes(imageRef, image);
-
-    console.log(`Uploading ${image.name}`)
-
-    // Obtendo a URL pública da imagem após o upload
-    const imageUrl = await getDownloadURL(imageRef);
-
-    // Salvando a URL da imagem no Firestore com timestamp
-    await addDoc(collection(db, 'images'), {
+    const docRef = await addDoc(collection(db, 'images'), {
       imageUrl: imageUrl,
+      nameImage: nameImage,
       timestamp: serverTimestamp(),
     });
 
-    console.log('Imagem enviada com sucesso:', imageUrl);
-    return imageUrl;
+    console.log('Imagem salva no Firestore com sucesso! ID:', docRef.id);
+    return docRef.id;
   } catch (error) {
-    console.error('Erro ao enviar a imagem:', error);
+    console.error('Erro ao enviar a imagem para Firestore:', error);
     throw error;
   }
 }
